@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.floatpoint.kyt.mapper.MaterialfavoriteMapper">
+    <resultMap id="materialfavorite" type="com.floatpoint.kyt.entity.dataobject.Materialfavorite">
+        <id property="favId" column="fav_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="materialId" column="material_id"/>
+        <result property="modifyDate" column="modify_date"/>
+        <result property="isDelete" column="is_delete"/>
+
+
+
+        <!--        复杂的属性需要单独处理 是对象就使用association，是集合就使用collection
+        javaType="" 指定的属性类型
+        集合中的泛型信息，使用ofType获取-->
+    </resultMap>
+    <update id="favoritecount" parameterType="java.lang.String">
+        update kyt_db.material
+        set favorite_count=favorite_count+1
+where material_id=#{materialId}
+    </update>
+    <update id="decfavoritecount" parameterType="java.lang.String">
+        update kyt_db.material
+        set favorite_count=favorite_count-1
+        where material_id=#{materialId}
+    </update>
+
+<select id="jude" parameterType="java.lang.String" resultMap="materialfavorite">
+    select *
+from kyt_db.materialfavorite m
+where m.user_id=#{userId} and material_id=#{materialId} and is_delete=0
+</select>
+    <update id="deletefav" parameterType="java.lang.String">
+update kyt_db.materialfavorite
+set is_delete=1
+where user_id=#{userId} and material_id=#{materialId}
+    </update>
+</mapper>

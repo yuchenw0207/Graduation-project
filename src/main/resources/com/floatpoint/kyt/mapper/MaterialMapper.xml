@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.floatpoint.kyt.mapper.MaterialMapper">
+    <resultMap id="Material" type="com.floatpoint.kyt.entity.dataobject.Material">
+        <id property="materialId" column="material_id"/>
+        <result property="posterId" column="poster_id"/>
+        <result property="title" column="title"/>
+        <result property="textContent" column="text_content"/>
+        <result property="imageContent" column="image_content"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="favoriteCount" column="favorite_count"/>
+        <result property="createDate" column="create_date"/>
+        <result property="modifiedDate" column="modified_date"/>
+        <result property="isDelete" column="is_delete"/>
+
+        <!--        复杂的属性需要单独处理 是对象就使用association，是集合就使用collection
+        javaType="" 指定的属性类型
+        集合中的泛型信息，使用ofType获取-->
+    </resultMap>
+    <select id="search" parameterType="java.lang.String" resultMap="Material">
+        select m1.title,m1.material_id,m1.favorite_count
+        from kyt_db.material m1,kyt_db.materialtag m2
+        where m1.material_id=m2.material_id and m2.tag_name like concat(concat('%', #{tag}), '%') and m1.is_delete=0
+    </select>
+    <select id="detail" parameterType="java.lang.String" resultMap="Material">
+        select m1.title,m1.text_content,m1.image_content,m1.favorite_count,m1.create_date,m1.modified_date
+        from kyt_db.material m1
+        where m1.material_id= #{materialId} and m1.is_delete=0
+    </select>
+    <select id="recommend" resultMap="Material">
+        select m1.title,m1.material_id,m1.favorite_count
+        from kyt_db.material m1
+        where is_delete =0
+        order by favorite_count desc
+    </select>
+
+    <update id="deletede" parameterType="java.lang.String" >
+        UPDATE kyt_db.material
+        set is_delete=1,modified_date=now()
+        WHERE poster_id= #{posterId} and material_id=#{materialId}
+    </update>
+    <select id="searchbro" parameterType="java.lang.String" resultMap="Material">
+        select m2.title,m2.material_id
+        from kyt_db.materialbrowse m1,kyt_db.material m2
+        where m1.user_id= #{userId} and m1.material_id=m2.material_id and m1.is_delete=0
+    </select>
+    <select id="searchfav" parameterType="java.lang.String" resultMap="Material">
+        select m2.title,m2.material_id
+        from kyt_db.materialfavorite m1,kyt_db.material m2
+        where m1.user_id= #{userId} and m1.material_id=m2.material_id and m1.is_delete=0
+    </select>
+    <select id="selectlast" parameterType="java.lang.String" resultMap="Material">
+select material_id
+from material
+where is_delete=0 and material_id=(select max(material_id)from material where is_delete=0)
+    </select>
+</mapper>

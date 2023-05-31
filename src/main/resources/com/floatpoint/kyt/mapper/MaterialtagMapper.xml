@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.floatpoint.kyt.mapper.MaterialtagMapper">
+    <resultMap id="materialtag" type="com.floatpoint.kyt.entity.dataobject.Materialtag">
+        <id property="tagId" column="tag_id" />
+        <result property="tagName" column="tag_name"/>
+        <result property="tagId" column="tag_id"/>
+        <result property="createDate" column="create_date"/>
+        <result property="modifyDate" column="modify_date"/>
+        <result property="isDelete" column="is_delete"/>
+
+
+    </resultMap>
+    <select id="history" parameterType="java.lang.String" resultMap="materialtag">
+        select m3.tag_name,m3.material_id
+        from kyt_db.materialbrowse m2,kyt_db.materialtag m3
+        where m2.material_id=m3.material_id and m2.user_id=#{userId}
+    </select>
+    <update id="deletetag" parameterType="java.lang.String" >
+        UPDATE kyt_db.materialtag
+        set is_delete=1,modified_date=now()
+        WHERE material_id=#{materialId} and tag_name=#{tagName}
+    </update>
+    <update id="deletemt" parameterType="java.lang.String" >
+        UPDATE kyt_db.materialtag
+        set is_delete=1,modified_date=now()
+        WHERE material_id=#{materialId}
+    </update>
+</mapper>
